@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t jwillemse/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run jwillemse/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t jwillemse/multi-client ./client
+  - docker build -t jwillemse/multi-server ./server
+  - docker build -t jwillemse/multi-worker ./worker
+  - docker build -t jwillemse/multi-nginx ./nginx
+  # Log in to the Docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push images to Docker Hub
+  - docker push jwillemse/multi-client
+  - docker push jwillemse/multi-server
+  - docker push jwillemse/multi-worker
+  - docker push jwillemse/multi-nginx

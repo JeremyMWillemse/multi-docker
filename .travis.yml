@@ -20,3 +20,16 @@ after_success:
   - docker push jwillemse/multi-server
   - docker push jwillemse/multi-worker
   - docker push jwillemse/multi-nginx
+
+deploy:
+  provider: elasticbeanstalk
+  region: us-west-2
+  app: multi-docker
+  env: MultiDocker-env
+  bucket_name: elasticbeanstalk-us-west-2-154328620874
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret:
+    secure: $AWS_SECRET_KEY
